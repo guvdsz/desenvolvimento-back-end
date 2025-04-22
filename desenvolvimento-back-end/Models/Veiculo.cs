@@ -16,9 +16,11 @@ namespace desenvolvimento_back_end.Models
         public string Placa { get; set; }
 
         [Required(ErrorMessage = "O ano de fabricação é obrigatório.")]
+        [Display(Name = "Ano de Fabricãção")]
         public int AnoFabricacao { get; set; }
 
         [Required(ErrorMessage = "O ano do modelo é obrigatório.")]
+        [Display(Name = "Ano do Modelo")]
         public string AnoModelo { get; set; }
     }
 }
