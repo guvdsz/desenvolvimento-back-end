@@ -36,7 +36,7 @@ namespace desenvolvimento_back_end.Controllers
             return View(veiculo);
         }
 
-        public async Task<IActionResult >Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
@@ -54,23 +54,23 @@ namespace desenvolvimento_back_end.Controllers
         }
 
         [HttpPost]
-            public async Task<IActionResult> Edit(int id, Veiculo veiculo)
+        public async Task<IActionResult> Edit(int id, Veiculo veiculo)
+        {
+            if (id != veiculo.Id)
             {
-                if (id != veiculo.Id)
-                {
-                    return NotFound();
-                }
-
-                if (ModelState.IsValid)
-                {
-                    _context.Veiculos.Update(veiculo);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction("Index");
-                }
-
-                return View(veiculo);
-
+                return NotFound();
             }
+
+            if (ModelState.IsValid)
+            {
+                _context.Veiculos.Update(veiculo);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+
+            return View(veiculo);
+
+        }
 
         public async Task<IActionResult> Details(int? id)
         {
@@ -125,6 +125,26 @@ namespace desenvolvimento_back_end.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> Relatorio(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var veiculo = await _context.Veiculos.FindAsync(id);
+            if (veiculo == null)
+            {
+                return NotFound();
+            }
+            var consumos = await _context.Consumos.Where(c => c.VeiculoId == id).OrderByDescending(c => c.Data).ToListAsync();
+            decimal total = consumos.Sum(c => c.Valor);
+
+            ViewBag.Veiculo = veiculo;
+            ViewBag.Total = total;
+
+            return View(consumos);
         }
     }
 }
